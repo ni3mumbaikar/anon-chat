@@ -5,9 +5,22 @@ function App() {
   const [inputValue, setInputValue] = useState('');
   let ws:any;
   let messages= "";
-  useEffect(() => {
+  let handleSubmit:any;
+  // useEffect(() => {
     // Create a WebSocket connection when the component mounts
     ws = new WebSocket('ws://localhost:8765');
+
+    handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+      console.log("hi"+inputValue);
+      event.preventDefault(); // Prevent default form submission behavior
+      console.log("hi"+inputValue);
+      // Send input value to the WebSocket server
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        console.log("sending msg"+inputValue);
+        ws.send(inputValue);
+        setInputValue(''); // Clear input field after submission
+      }
+    };
 
     // Event listener for open connection
     ws.onopen = () => {
@@ -31,10 +44,10 @@ function App() {
     };
 
     // Clean up function to close the WebSocket connection when component unmounts
-    return () => {
-      ws.close();
-    };
-  }, []);
+    // return () => {
+    //   ws.close();
+    // };
+  // }, []);
 
 
 
@@ -48,17 +61,7 @@ function App() {
   function setMessage(msg:String){
       messages += msg;
   }
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    console.log("hi"+inputValue);
-    event.preventDefault(); // Prevent default form submission behavior
-    console.log("hi"+inputValue);
-    // Send input value to the WebSocket server
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      console.log("hi"+inputValue);
-      ws.send(inputValue);
-      setInputValue(''); // Clear input field after submission
-    }
-  };
+  
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
