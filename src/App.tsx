@@ -1,92 +1,73 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
-  // const [inputValue, setInputValue] = useState('');
   const [inputValue, setInputValue] = useState('');
-  let ws:any;
-  let messages= "";
-  let handleSubmit:any;
-  // useEffect(() => {
-    // Create a WebSocket connection when the component mounts
-    ws = new WebSocket('ws://localhost:8765');
+  const [messages, setMessages] = useState([]);
+  let ws = new WebSocket('ws://localhost:8765');
+  useEffect(() => {
+    
 
-    handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-      console.log("hi"+inputValue);
-      event.preventDefault(); // Prevent default form submission behavior
-      console.log("hi"+inputValue);
-      // Send input value to the WebSocket server
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        console.log("sending msg"+inputValue);
-        ws.send(inputValue);
-        setInputValue(''); // Clear input field after submission
-      }
-    };
-
-    // Event listener for open connection
     ws.onopen = () => {
       console.log('WebSocket connection established.');
     };
 
-    // Event listener for incoming messages
     ws.onmessage = (event:any) => {
       console.log(event);
-      setMessage(event.data);
+      // console.log("text")
+      setMessages(event.data);
     };
 
-    // Event listener for closing connection
     ws.onclose = () => {
       console.log('WebSocket connection closed.');
     };
 
-    // Event listener for errors
-    ws.onerror = (error:any) => {
+    ws.onerror = (error) => {
       console.error('WebSocket error:', error);
     };
 
-    // Clean up function to close the WebSocket connection when component unmounts
-    // return () => {
-    //   ws.close();
-    // };
-  // }, []);
+    return () => {
+      ws.close();
+    };
+  }, []);
 
-
-
-  const inlineStyles = {
-    width: '100vh',
-    height: '500px',
-    border: '1px solid black'
-    // Add any other styles you need here
+  const handleSubmit = (event: any) => {
+    event.preventDefault();
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(inputValue);
+      setInputValue('');
+    }
   };
 
-  function setMessage(msg:String){
-      messages += msg;
-  }
-  
+  const inlineStyles = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh'
+  };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event:any) => {
     setInputValue(event.target.value);
   };
 
   return (
-    <>
-      <div style={inlineStyles}>
-        {
-          messages
-          // "Hi"
-        }
+    <div style={inlineStyles}>
+      <div>
+      <div>{messages}</div>
         <div>
-                <h3>WebSocket Example</h3>
-      <form onSubmit={handleSubmit}>
-        <input type="text" value={inputValue} onChange={handleInputChange} />
-        <button type="submit">Send</button>
-      </form>
-      
+          <h3>WebSocket Example</h3>
+          <form onSubmit={handleSubmit}>
+            <input 
+              type="text" 
+              value={inputValue} 
+              onChange={handleInputChange} 
+              placeholder="Type your message..." 
+            />
+            <button type="submit">Send</button>
+          </form>
+        </div>
       </div>
- 
-      </div>
-    </>
+    </div>
   );
 }
-
 
 export default App;
