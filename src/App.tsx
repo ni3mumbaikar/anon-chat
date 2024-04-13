@@ -5,13 +5,13 @@ function App() {
   const [messages, setMessages] = useState([]);
   let ws = new WebSocket('ws://localhost:8765');
   useEffect(() => {
-    
+
 
     ws.onopen = () => {
       console.log('WebSocket connection established.');
     };
 
-    ws.onmessage = (event:any) => {
+    ws.onmessage = (event: any) => {
       console.log(event);
       // console.log("text")
       setMessages(event.data);
@@ -25,9 +25,9 @@ function App() {
       console.error('WebSocket error:', error);
     };
 
-    return () => {
-      ws.close();
-    };
+    // return () => {
+    //   ws.close();
+    // };
   }, []);
 
   const handleSubmit = (event: any) => {
@@ -45,22 +45,22 @@ function App() {
     minHeight: '100vh'
   };
 
-  const handleInputChange = (event:any) => {
+  const handleInputChange = (event: any) => {
     setInputValue(event.target.value);
   };
 
   return (
     <div style={inlineStyles}>
       <div>
-      <div>{messages}</div>
+        <div>{messages}</div>
         <div>
           <h3>WebSocket Example</h3>
           <form onSubmit={handleSubmit}>
-            <input 
-              type="text" 
-              value={inputValue} 
-              onChange={handleInputChange} 
-              placeholder="Type your message..." 
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder="Type your message..."
             />
             <button type="submit">Send</button>
           </form>
