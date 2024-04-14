@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState('');
+  let message: any = '';
   let ws = new WebSocket('ws://localhost:8765');
   useEffect(() => {
 
@@ -14,7 +15,8 @@ function App() {
     ws.onmessage = (event: any) => {
       console.log(event);
       // console.log("text")
-      setMessages(event.data);
+      message = message + "\n" + event.data;
+      setMessages(message);
     };
 
     ws.onclose = () => {
