@@ -104,5 +104,48 @@ body > #root > div {
 }
 
 .send-icon{
-  color:#212A31
+  color:white;
+}
+
+.chat-container {
+  display: grid;
+  margin-bottom: 0.3rem;
+  grid-template-rows: 1fr auto; /* Flexible chat area, fixed dock */
+  height: inherit; /* Adjust height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+  scroll-behavior: smooth;
+}
+
+ .chat-container::-webkit-scrollbar-track
+ {
+   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+   background-color: #F5F5F5;
+ }
+ 
+ .chat-container::-webkit-scrollbar
+ {
+   width: 10px;
+   background-color: #F5F5F5;
+ }
+ 
+ .chat-container::-webkit-scrollbar-thumb
+ {
+   background-color: #0ae;
+   
+   background-image: -webkit-gradient(linear, 0 0, 0 100%,
+                      color-stop(.5, rgba(255, 255, 255, .2)),
+              color-stop(.5, transparent), to(transparent));
+ }
+
+.chat-wrapper {
+  display: flex; /* Allow chat components to arrange horizontally */
+  flex-direction: column; /* Stack chats vertically */
+}
+
+.scorllwidht0{
+  scrollbar-width: none;
+}
+
+.scorllwidht0{
+  scrollbar-width: 10px;
 }
