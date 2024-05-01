@@ -149,3 +149,25 @@ body > #root > div {
 .scorllwidht0{
   scrollbar-width: 10px;
 }
+
+.flex-container-sys {
+  opacity: 50%;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Vertically center content */
+}
+
+.text-content{
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.line {
+  flex: 0 0 20%; /* Set width to 20% for lines and text */
+  height: 0.3px; /* Adjust line height as needed */
+  background-color: #ccc; /* Change line color */
+  opacity: 70%;
+  margin: 0 5px; /* Add margin between lines and text */
+  text-align: center; /* Center text within its width */
+}

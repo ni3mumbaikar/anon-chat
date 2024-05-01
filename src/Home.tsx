@@ -7,9 +7,10 @@ const Home = () => {
     const [ws, setWs] = useState(null);
     const [username, setUsername] = useState(null)
     const [messages, setMessages] = useState([]);
+    const [typedMsg, setTypedMsg] = useState("");
 
-    const addNewMessage = (messageContent, messageSender) => {
-        const newMessage = { 'sender': messageSender, 'content': messageContent, 'timestamp': getCurrentTimeString(), 'self': false };
+    const addNewMessage = (messageContent, messageSender, self) => {
+        const newMessage = { 'sender': messageSender, 'content': messageContent, 'timestamp': getCurrentTimeString(), 'self': self };
         setMessages([...messages, newMessage]); // Add new message to the state
     };
 
@@ -22,12 +23,11 @@ const Home = () => {
     useEffect(() => {
         const wsClient = new WebSocket(URL_WEB_SOCKET);
         wsClient.onopen = () => {
+            console.log('ws opened')
             setWs(wsClient);
         };
         wsClient.onmessage = (evt: any) => {
             setUsername(evt.data)
-            console.log(evt)
-            console.log('Username fetched :', evt.data)
         };
         wsClient.onclose = () => console.log('ws closed');
         return () => {
@@ -38,15 +38,13 @@ const Home = () => {
     useEffect(() => {
         if (ws) {
             ws.onmessage = (evt: any) => {
-                console.log(evt)
                 try {
                     const data = JSON.parse(evt.data)
-                    addNewMessage(data.msg, data.from)
+                    addNewMessage(data.msg, data.from, false)
                 }
                 catch (err) {
-                    console.error(err)
+                    console.log(err)
                     setUsername(evt.data)
-                    console.log('Username fetched 2 :', evt.data);
                 }
             };
         }
@@ -62,26 +60,25 @@ const Home = () => {
         return `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
     }
 
+    function newCurrentUserMsg(data) {
+        setTypedMsg(data)
+    }
 
+    function onSend() {
+        addNewMessage(typedMsg.trim(), username, true);
+        console.log(typedMsg)
+        ws.send(typedMsg)
+        setTypedMsg('');
+    }
 
     return (
         <div className="app__home">
             <div className="chat-container">
                 <div className="chat-wrapper">
                     {renderMessages()}
-                    {/* <Chat sender={'BotSocrates'} content={'Hi'} timestamp={'03:01 AM'} self={false} /> */}
-                    {/* <Chat sender={'Nitin'} content={'Hi'} timestamp={'03:01 AM'} self={true} /> */}
-                    {/* <Chat sender={'BotSocrates'} content={'Hi'} timestamp={'03:01 AM'} self={false} /> */}
-                    {/* <Chat sender={'Nitin'} content={'Hi'} timestamp={'03:01 AM'} self={true} /> */}
-                    {/* <Chat sender={'BotSocrates'} content={'Hi'} timestamp={'03:01 AM'} self={false} /> */}
-                    {/* <Chat sender={'Nitin'} content={'Hi'} timestamp={'03:01 AM'} self={true} /> */}
-                    {/* <Chat sender={'BotSocrates'} content={'Hi'} timestamp={'03:01 AM'} self={false} /> */}
-                    {/* <Chat sender={'Nitin'} content={'Hi'} timestamp={'03:01 AM'} self={true} /> */}
-                    {/* <Chat sender={'BotSocrates'} content={'Hi'} timestamp={'03:01 AM'} self={false} /> */}
-                    {/* <Chat sender={'Nitin'} content={'Hi'} timestamp={'03:01 AM'} self={true} /> */}
                 </div>
             </div>
-            <Dock />
+            <Dock onSend={onSend} msgInputEvent={newCurrentUserMsg} typedMsg={typedMsg} />
         </div>
     );
 };
