@@ -1,4 +1,4 @@
-import React from 'react'
+
 
 
 const Chat = ({ sender, content, timestamp, self }) => {

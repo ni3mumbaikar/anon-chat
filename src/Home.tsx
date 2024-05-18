@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-const URL_WEB_SOCKET = 'ws://localhost:8765';
 import Dock from './Dock';
 import Chat from './Chat';
 
@@ -21,7 +20,10 @@ const Home = () => {
     };
 
     useEffect(() => {
-        const wsClient = new WebSocket(URL_WEB_SOCKET);
+        const weburl = import.meta.env.VITE_WEBURL;
+        const port = import.meta.env.VITE_PORT;
+        console.log(`Connecting to WebSocket at ws://${weburl}:${port}`);
+        const wsClient = new WebSocket(`ws://${weburl}:${port}`);
         wsClient.onopen = () => {
             console.log('ws opened')
             setWs(wsClient);

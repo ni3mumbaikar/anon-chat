@@ -12,7 +12,7 @@ const Dock = ({ msgInputEvent, typedMsg, onSend }) => {
         }
     }
 
-    function sendMsgFromDock(e) {
+    function sendMsgFromDock() {
         onSend()
     }
 

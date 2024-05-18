@@ -9,8 +9,8 @@ export const WebSocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (webSocket === null) {
-      const weburl = import.meta.env.WEBURL;
-      const port = import.meta.env.PORT;
+      const weburl = import.meta.env.VITE_WEBURL;
+      const port = import.meta.env.VITE_PORT;
       const newWebSocket = new WebSocket(`ws://${weburl}:${port}`);
       
       console.log(`Connecting to WebSocket at ws://${weburl}:${port}`);
