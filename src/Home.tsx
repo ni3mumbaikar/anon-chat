@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Dock from './Dock';
 import Chat from './Chat';
 
 const Home = () => {
     const [ws, setWs] = useState(null);
-    const [username, setUsername] = useState(null)
+    const [username, setUsername] = useState(null);
     const [messages, setMessages] = useState([]);
     const [typedMsg, setTypedMsg] = useState("");
+    const chatContainerRef = useRef(null); // Reference to the chat container
 
     const addNewMessage = (messageContent, messageSender, self) => {
         const newMessage = { 'sender': messageSender, 'content': messageContent, 'timestamp': getCurrentTimeString(), 'self': self };
-        setMessages([...messages, newMessage]); // Add new message to the state
+        setMessages(prevMessages => [...prevMessages, newMessage]); // Add new message to the state
     };
 
     const renderMessages = () => {
@@ -25,11 +26,11 @@ const Home = () => {
         console.log(`Connecting to WebSocket at ws://${weburl}:${port}`);
         const wsClient = new WebSocket(`ws://${weburl}:${port}`);
         wsClient.onopen = () => {
-            console.log('ws opened')
+            console.log('ws opened');
             setWs(wsClient);
         };
-        wsClient.onmessage = (evt: any) => {
-            setUsername(evt.data)
+        wsClient.onmessage = (evt) => {
+            setUsername(evt.data);
         };
         wsClient.onclose = () => console.log('ws closed');
         return () => {
@@ -39,19 +40,24 @@ const Home = () => {
 
     useEffect(() => {
         if (ws) {
-            ws.onmessage = (evt: any) => {
+            ws.onmessage = (evt) => {
                 try {
-                    const data = JSON.parse(evt.data)
-                    addNewMessage(data.msg, data.from, false)
-                }
-                catch (err) {
-                    console.log(err)
-                    setUsername(evt.data)
+                    const data = JSON.parse(evt.data);
+                    addNewMessage(data.msg, data.from, false);
+                } catch (err) {
+                    console.log(err);
+                    setUsername(evt.data);
                 }
             };
         }
-    }, [ws, messages]);
+    }, [ws]);
 
+    useEffect(() => {
+        // Scroll to bottom when messages change
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [messages]);
 
     function getCurrentTimeString() {
         const date = new Date();
@@ -63,19 +69,18 @@ const Home = () => {
     }
 
     function newCurrentUserMsg(data) {
-        setTypedMsg(data)
+        setTypedMsg(data);
     }
 
     function onSend() {
         addNewMessage(typedMsg.trim(), username, true);
-        console.log(typedMsg)
-        ws.send(typedMsg)
+        ws.send(typedMsg.trim());
         setTypedMsg('');
     }
 
     return (
         <div className="app__home">
-            <div className="chat-container">
+            <div className="chat-container" ref={chatContainerRef}>
                 <div className="chat-wrapper">
                     {renderMessages()}
                 </div>
@@ -84,4 +89,5 @@ const Home = () => {
         </div>
     );
 };
+
 export default Home;
