@@ -45,7 +45,6 @@ const Home = () => {
                     const data = JSON.parse(evt.data);
                     addNewMessage(data.msg, data.from, false);
                 } catch (err) {
-                    console.log(err);
                     setUsername(evt.data);
                 }
             };
