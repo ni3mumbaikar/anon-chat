@@ -6,6 +6,7 @@ import { msg_types } from './msg_types/msgTypes';
 const Home = () => {
     const [ws, setWs] = useState(null);
     const [username, setUsername] = useState(null);
+    const [userImage, setUserImage] = useState(null);
     const [messages, setMessages] = useState([]);
     const [typedMsg, setTypedMsg] = useState("");
     const chatContainerRef = useRef(null); // Reference to the chat container
@@ -17,7 +18,7 @@ const Home = () => {
 
     const renderMessages = () => {
         return messages.map((message, index) => (
-            <Chat key={index} content={message.content} sender={message.sender} timestamp={message.timestamp} self={message.self} />
+            <Chat key={index} imgSrc={userImage} content={message.content} sender={message.sender} timestamp={message.timestamp} self={message.self} />
         ));
     };
 
@@ -32,6 +33,7 @@ const Home = () => {
         };
         wsClient.onmessage = (evt) => {
             setUsername(evt.data.msg.username);
+            setUserImage(evt.data.msg.profile_image_url)
         };
         wsClient.onclose = () => console.log('ws closed');
         return () => {
@@ -47,7 +49,7 @@ const Home = () => {
                 if (msg_types.includes(data.msg_type)) {
                     if (data.msg_type == 'USERDETAILS') {
                         setUsername(data.msg.username);
-                        console.log(data.msg.username);
+                        setUserImage(data.msg.profile_image_url)
                     } else {
                         addNewMessage(data.msg, data.from, false);
                     }
