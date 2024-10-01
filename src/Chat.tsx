@@ -17,7 +17,7 @@ const Chat = ({ sender, content, timestamp, self }) => {
 
             <div className="flex-container-sys">
                 <hr className="line" />
-                <span className="text-content">{content}</span>
+                <span className="text-content">{content.username}</span>
                 <hr className="line" />
             </div>
 
