@@ -1,10 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
 import Dock from './Dock';
 import Chat from './Chat';
+import { msg_types } from './msg_types/msgTypes';
 
 const Home = () => {
     const [ws, setWs] = useState(null);
     const [username, setUsername] = useState(null);
+    const [userImage, setUserImage] = useState(null);
     const [messages, setMessages] = useState([]);
     const [typedMsg, setTypedMsg] = useState("");
     const chatContainerRef = useRef(null); // Reference to the chat container
@@ -16,7 +18,7 @@ const Home = () => {
 
     const renderMessages = () => {
         return messages.map((message, index) => (
-            <Chat key={index} content={message.content} sender={message.sender} timestamp={message.timestamp} self={message.self} />
+            <Chat key={index} imgSrc={userImage} content={message.content} sender={message.sender} timestamp={message.timestamp} self={message.self} />
         ));
     };
 
@@ -30,7 +32,8 @@ const Home = () => {
             setWs(wsClient);
         };
         wsClient.onmessage = (evt) => {
-            setUsername(evt.data);
+            setUsername(evt.data.msg.username);
+            setUserImage(evt.data.msg.profile_image_url)
         };
         wsClient.onclose = () => console.log('ws closed');
         return () => {
@@ -41,12 +44,17 @@ const Home = () => {
     useEffect(() => {
         if (ws) {
             ws.onmessage = (evt) => {
-                try {
-                    const data = JSON.parse(evt.data);
-                    addNewMessage(data.msg, data.from, false);
-                } catch (err) {
-                    setUsername(evt.data);
+                const data = JSON.parse(evt.data);
+                // To acknowledge only approved msg types
+                if (msg_types.includes(data.msg_type)) {
+                    if (data.msg_type == 'USERDETAILS') {
+                        setUsername(data.msg.username);
+                        setUserImage(data.msg.profile_image_url)
+                    } else {
+                        addNewMessage(data.msg, data.from, false);
+                    }
                 }
+
             };
         }
     }, [ws]);
