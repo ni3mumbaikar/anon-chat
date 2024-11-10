@@ -83,7 +83,7 @@ const Home = () => {
         addNewMessage(typedMsg.trim(), username, true);
         ws.send(typedMsg.trim());
         setTypedMsg('');
-    }
+    }   
 
     return (
         <div className="app__home">

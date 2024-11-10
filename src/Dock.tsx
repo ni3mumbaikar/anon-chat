@@ -7,13 +7,17 @@ const Dock = ({ msgInputEvent, typedMsg, onSend }) => {
     }
 
     function onEnterPressed(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter'&& typedMsg.trim() !== '') {
             onSend()
+            msgInputEvent('')
         }
     }
 
     function sendMsgFromDock() {
-        onSend()
+        if(typedMsg.trim() !== '') {
+            onSend()
+            msgInputEvent('')
+        }
     }
 
     return (
